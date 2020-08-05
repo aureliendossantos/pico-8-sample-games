@@ -5,6 +5,7 @@ function _init()
  p={x=60,y=80,speed=1.5}
  bullets={}
  enemies={}
+ explosions={}
  create_stars()
  spawn_enemies()
 end
@@ -18,6 +19,7 @@ function _update60()
  update_bullets()
  update_stars()
  update_enemies()
+ update_explosions()
  
  if #enemies==0 then
  	spawn_enemies()
@@ -40,6 +42,8 @@ function _draw()
  for b in all(bullets) do
  	spr(2,b.x,b.y)
  end
+ --explosions
+ draw_explosions()
 end
 -->8
 --bullets
@@ -100,7 +104,7 @@ end
 function spawn_enemies()
 	add(enemies,{
 	 x=60,
-	 y=-8,
+	 y=-24,
 	 life=4
 	})
 end
@@ -114,7 +118,7 @@ function update_enemies()
   --collision
   for b in all(bullets) do
   	if collision(enemy,b) then
-  		sfx(1)
+  		create_explosion(b.x+4,b.y+3)
   		del(bullets,b)
   		enemy.life-=1
   		if enemy.life==0 then
@@ -132,6 +136,33 @@ function collision(a,b)
 	            or a.y > b.y+8
 	            or a.x+8 < b.x
 	            or a.y+8 < b.y)
+end
+-->8
+--explosions
+
+function create_explosion(x,y)
+	add(explosions,{
+	 x = x,
+	 y = y,
+	 timer = 0
+	})
+	sfx(1)
+end
+
+function update_explosions()
+	for boom in all(explosions) do
+		boom.timer += 1
+		if boom.timer == 13 then
+			del(explosions, boom)
+		end
+	end
+end
+
+function draw_explosions()
+	for boom in all(explosions) do
+		circ(boom.x, boom.y,
+		 boom.timer/3, 8+boom.timer%3)
+	end
 end
 __gfx__
 000000000060060000a00a0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
