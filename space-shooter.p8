@@ -1,5 +1,5 @@
 pico-8 cartridge // http://www.pico-8.com
-version 27
+version 29
 __lua__
 function _init()
  p={x=60,y=80,speed=1.5}
@@ -7,7 +7,6 @@ function _init()
  enemies={}
  explosions={}
  create_stars()
- spawn_enemies()
 end
 
 function _update60()
@@ -22,7 +21,7 @@ function _update60()
  update_explosions()
  
  if #enemies==0 then
- 	spawn_enemies()
+ 	spawn_enemies(ceil(rnd(7)))
  end
 end
 
@@ -101,12 +100,15 @@ end
 -->8
 --enemies
 
-function spawn_enemies()
-	add(enemies,{
-	 x=60,
-	 y=-24,
-	 life=4
-	})
+function spawn_enemies(amount)
+	gap=(128-8*amount)/(amount+1)
+	for i=1,amount do
+		add(enemies,{
+		 x=gap*i + 8*(i-1),
+		 y=-24,
+		 life=4
+		})
+	end
 end
 
 function update_enemies()
