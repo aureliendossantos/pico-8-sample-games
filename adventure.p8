@@ -6,6 +6,7 @@ __lua__
 
 function _init()
 	create_player()
+	init_camera()
 	init_msg()
 end
 
@@ -36,10 +37,27 @@ function check_flag(flag,x,y)
 	return fget(sprite,flag)
 end
 
+function init_camera()
+	camx,camy=0,0
+end
+
 function update_camera()
- local camx=flr(p.x/16)*16
- local camy=flr(p.y/16)*16
- camera(camx*8,camy*8)
+ --section sur la map
+ local sectionx=flr(p.x/16)*16
+ local sectiony=flr(p.y/16)*16
+ --destination de la camera
+ local destx=sectionx*8
+ local desty=sectiony*8
+ --difference avec pos. actuelle
+ local diffx=destx-camx
+ local diffy=desty-camy
+ --reduction de la distance
+ diffx*=0.25
+ diffy*=0.25
+ --application de la reduction
+ camx+=diffx
+ camy+=diffy
+ camera(camx,camy)
 end
 
 function next_tile(x,y)
@@ -104,8 +122,6 @@ function player_movement()
 		p.start_ox=newox
 		p.start_oy=newoy
 		p.anim_t=1
-	else
-	 sfx(0)
 	end
 	
 	--animation
@@ -126,10 +142,10 @@ function interact(x,y)
 	end
 	--messages
 	if x==4 and y==2 then
-		create_msg("panneau","bienvenue dans mon jeu\nd'aventure.")
+		create_msg("panneau","bienvenue dans ce tutoriel de\njeu d'exploration !","utilisez cette demo pour\ncreer vos propres aventures.")
 	end
 	if x==8 and y==12 then
-		create_msg("alyssa","je n'ai aucune idee de ce qui\nse cache dans ce temple...","fais attention a toi !")
+		create_msg("alyssa","ce temple est bien vide pour\nle moment...","que creeras-tu dedans ?")
 	end
 end
 
